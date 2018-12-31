@@ -13,7 +13,12 @@ void OnStart() {
   int totalOrders = OrdersTotal(), i, iError;
   bool ok;
 
-  for(i = 0; i < totalOrders; i++) {
+  if (totalOrders == 0) {
+    Print("=== No order found");
+    return;
+  }
+
+  for(i = totalOrders - 1; i >= 0; i--) {
     if(OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) {
       switch(OrderType()) {
         case OP_BUY:
@@ -22,19 +27,22 @@ void OnStart() {
         case OP_SELL:
           ok = OrderClose(OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 5);
           break;
-        default:
+        case OP_BUYLIMIT:
+        case OP_SELLLIMIT:
+        case OP_BUYSTOP:
+        case OP_SELLSTOP:
           ok = OrderDelete(OrderTicket());
+          break;
       }
       if (!ok) {
         iError = GetLastError();
-        Print("Order: ", OrderTicket(), ". Error: ", iError, " ", ErrorDescription(iError));
+        Print("=== Order: ", OrderTicket(), ". Error: ", iError, " ", ErrorDescription(iError));
       }
     }
     else {
-      Print("Cannot select order: ", ErrorDescription(iError));
+      Print("=== Cannot select order: ", ErrorDescription(iError));
     }
   }
-  return(0);
 }
 //+------------------------------------------------------------------+
 
