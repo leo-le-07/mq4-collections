@@ -8,10 +8,10 @@
 
 #property show_inputs
 
-double Lots = 0.3;
 double StopLoss = 10;
 double TakeProfit = 10;
-extern double Entry = Ask;
+extern double Entry = 0.0000;
+extern double Lots = 0.3;
 
 
 //+------------------------------------------------------------------+
