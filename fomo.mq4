@@ -19,8 +19,8 @@ double min_lots = 0;
 void OnTick() {
   DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 1);
   DrawLabel("lots", "Lots size: " + DoubleToString(lots,2), clrGreenYellow, 2);
-  DrawLabel("command_1", "Commands: Buy (B), Sell (S), Close All (C)", clrGreenYellow, 3);
-  DrawLabel("command_2", "Adjust lots (0.05 per step): More (M), Less (L)", clrGreenYellow, 4);
+  DrawLabel("command_1", "Adjust lots (0.05 per step): (I)ncrease, (R)educe", clrGreenYellow, 4);
+  DrawLabel("command_2", "Commands: (B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose All", clrGreenYellow, 3);
 }
 
 void OnChartEvent(const int id,
@@ -34,17 +34,23 @@ void OnChartEvent(const int id,
         case 66: // B
           Buy(lots, take_profit, stop_lost);
           break;
+        case 85: // U
+          BuyLimit(lots, take_profit, stop_lost);
+          break;
         case 67: // C
           CloseAll();
           break;
-        case 76: // L
+        case 82: // R
           ReduceLots(lots, step_adjust);
           break;
-        case 77: // M
+        case 73: // I
           IncreaseLots(lots, step_adjust);
           break;
         case 83: // S
         Sell(lots, take_profit, stop_lost);
+          break;
+        case 69: // E
+        SellLimit(lots, take_profit, stop_lost);
           break;
         default: Print("=== Pressed key has not supported");
       }
@@ -67,6 +73,20 @@ void Buy(double lots, double take_profit, double stop_lost) {
   }
 }
 
+void BuyLimit(double lots, double take_profit, double stop_lost) {
+  double entry = Ask - 10 * 10 * Point;
+  double stoploss = entry - stop_lost*10*Point;
+  double takeprofit = entry + take_profit*10*Point;
+  int mode = OP_BUYLIMIT;
+  int slippage = 2;
+  int result = OrderSend(Symbol(), mode, lots, entry, slippage, stoploss, takeprofit, "Buy Limit Script", 0, NULL, CLR_NONE);
+  if (result == -1) {
+    Print("=== Buy limit order failed: ", GetLastError());
+  } else {
+    Print("=== Buy limit order successfully: ");
+  }
+}
+
 void Sell(double lots, double take_profit, double stop_lost) {
   double entry = Bid;
   double stoploss = entry + stop_lost*10*Point;
@@ -78,6 +98,20 @@ void Sell(double lots, double take_profit, double stop_lost) {
     Print("=== Sell order failed: ", GetLastError());
   } else {
     Print("=== Sell order successfully: ");
+  }
+}
+
+void SellLimit(double lots, double take_profit, double stop_lost) {
+  double entry = Bid + 10 * 10 * Point;
+  double stoploss = entry + stop_lost*10*Point;
+  double takeprofit = entry - take_profit*10*Point;
+  int mode = OP_SELLLIMIT;
+  int slippage = 2;
+  int result = OrderSend(Symbol(), mode, lots, entry, slippage, stoploss, takeprofit, "Sell Limit Script", 0, NULL, CLR_NONE);
+  if (result == -1) {
+    Print("=== Sell limit order failed: ", GetLastError());
+  } else {
+    Print("=== Sell limit order successfully: ");
   }
 }
 
