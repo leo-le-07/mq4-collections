@@ -12,7 +12,7 @@
 double stop_lost = 10;
 double take_profit = 10;
 double step_adjust = 0.05;
-double lots = 0.1;
+double lots = 0.3;
 double max_lots = 2;
 double min_lots = 0;
 
@@ -146,13 +146,7 @@ void DrawLabel(string id, string text, color text_color, int y_order) {
   ObjectSetText(id, text, font_size, font_name, text_color);
   ObjectSet(id, OBJPROP_CORNER, corner);
   ObjectSet(id, OBJPROP_XDISTANCE, x_points + 10);
-  int y_points;
-  if (y_order == 1) {
-    y_points = 2 + (y_order * 10);
-  } else {
-    y_points = 2 + (y_order * 10);
-  }
-  ObjectSet(id, OBJPROP_YDISTANCE, y_points);
+  ObjectSet(id, OBJPROP_YDISTANCE, 3 + (y_order * 10));
 }
 
 //+------------------------------------------------------------------+
