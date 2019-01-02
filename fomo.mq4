@@ -17,10 +17,10 @@ double max_lots = 2;
 double min_lots = 0;
 
 void OnTick() {
-  DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 1);
-  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2), clrGreenYellow, 2);
-  DrawLabel("command_1", "Adjust lots (0.05 per step): (I)ncrease, (R)educe", clrGreenYellow, 4);
-  DrawLabel("command_2", "Commands: (B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose All", clrGreenYellow, 3);
+  DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 0);
+  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2), clrYellow, 1);
+  DrawLabel("command_1", "Adjust lots (0.05 per step): (I)ncrease, (R)educe", clrYellow, 2);
+  DrawLabel("command_2", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose All", clrYellow, 3);
 }
 
 void OnChartEvent(const int id,
@@ -180,7 +180,7 @@ void DrawLabel(string id, string text, color text_color, int y_order) {
   ObjectSetText(id, text, font_size, font_name, text_color);
   ObjectSet(id, OBJPROP_CORNER, corner);
   ObjectSet(id, OBJPROP_XDISTANCE, x_points + 10);
-  ObjectSet(id, OBJPROP_YDISTANCE, 3 + (y_order * 10));
+  ObjectSet(id, OBJPROP_YDISTANCE, ((2 * y_order) + 1) * 10);
 }
 
 //+------------------------------------------------------------------+
