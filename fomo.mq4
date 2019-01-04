@@ -20,7 +20,7 @@ void OnTick() {
   DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 0);
   DrawLabel("lots", "Lots size: " + DoubleToString(lots,2), clrYellow, 1);
   DrawLabel("command_1", "Adjust lots (0.05 per step): (I)ncrease, (R)educe", clrYellow, 2);
-  DrawLabel("command_2", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose All", clrYellow, 3);
+  DrawLabel("command_2", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, C(X)lose, (C)lose All", clrYellow, 3);
 }
 
 void OnChartEvent(const int id,
@@ -39,6 +39,9 @@ void OnChartEvent(const int id,
           break;
         case 67: // C
           CloseAll();
+          break;
+        case 88: // X
+          Close();
           break;
         case 82: // R
           ReduceLots(lots, step_adjust);
@@ -115,9 +118,10 @@ void SellLimit(double lots, double take_profit, double stop_lost) {
   }
 }
 
-void CloseAll() {
+void _Close(bool isCloseAll=false) {
   int totalOrders = OrdersTotal(), i, iError;
   bool ok;
+  string currentSymbol = Symbol();
 
   if (totalOrders == 0) {
     Print("=== No order found");
@@ -126,6 +130,8 @@ void CloseAll() {
 
   for(i = totalOrders - 1; i >= 0; i--) {
     if(OrderSelect(i, SELECT_BY_POS, MODE_TRADES)) {
+      if (!isCloseAll && currentSymbol != OrderSymbol()) continue; // only close order of in current window
+
       switch(OrderType()) {
         case OP_BUY:
           ok = OrderClose(OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 5);
@@ -149,6 +155,14 @@ void CloseAll() {
       Print("=== Cannot select order: ", ErrorDescription(iError));
     }
   }
+}
+
+void Close() {
+  _Close();
+}
+
+void CloseAll() {
+  _Close(true);
 }
 
 void IncreaseLots(double &lots, const double step_adjust) {
