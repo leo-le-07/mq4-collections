@@ -9,18 +9,23 @@
 #property strict
 #include <stdlib.mqh>
 
-double stop_lost = 10;
-double take_profit = 10;
-double step_adjust = 0.05;
-double lots = 0.3;
-double max_lots = 2;
-double min_lots = 0;
+const double default_stop_lost = 10;
+const double default_take_profit = 10;
+const double step_adjust = 0.05;
+const double default_lots = 0.3;
+const double max_lots = 2;
+const double min_lots = 0.01;
+
+double stop_lost = default_stop_lost;
+double take_profit = default_take_profit;
+double lots = default_lots;
 
 void OnTick() {
   DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 0);
-  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2), clrYellow, 1);
-  DrawLabel("command_1", "Adjust lots (0.05 per step): (I)ncrease, (R)educe", clrYellow, 2);
-  DrawLabel("command_2", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, C(X)lose, (C)lose All", clrYellow, 3);
+  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2) + ". SL: -" + DoubleToString(stop_lost, 0) + " pips" + ". TP: +" + DoubleToString(take_profit, 0) + " pips", clrYellow, 1);
+  DrawLabel("command_1", "Adjust lots (0.05): (I)ncrease, (R)educe", clrYellow, 2);
+  DrawLabel("command_2", "SL/TP: Increase SL(1), Reduce SL(2), Increase TP(3), Reduce TP(4)", clrYellow, 3);
+  DrawLabel("command_3", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose, C(X)lose All, Reset(0)", clrYellow, 4);
 }
 
 void OnChartEvent(const int id,
@@ -38,16 +43,31 @@ void OnChartEvent(const int id,
           BuyLimit(lots, take_profit, stop_lost);
           break;
         case 67: // C
-          CloseAll();
+          Close();
           break;
         case 88: // X
-          Close();
+          CloseAll();
           break;
         case 82: // R
           ReduceLots(lots, step_adjust);
           break;
         case 73: // I
           IncreaseLots(lots, step_adjust);
+          break;
+        case 48: // 0
+          ResetParams();
+          break;
+        case 49: // 1
+          IncreaseSL();
+          break;
+        case 50: // 2
+          ReduceSL();
+          break;
+        case 51: // 3
+          IncreaseTP();
+          break;
+        case 52: // 4
+          ReduceTP();
           break;
         case 83: // S
         Sell(lots, take_profit, stop_lost);
@@ -60,6 +80,28 @@ void OnChartEvent(const int id,
       Print("=== Lots size: " + lots);
       break;
   }
+}
+
+void IncreaseSL() {
+  stop_lost += 2;
+}
+
+void ReduceSL() {
+  stop_lost -= 2;
+}
+
+void IncreaseTP() {
+  take_profit +=2;
+}
+
+void ReduceTP() {
+  take_profit -=2;
+}
+
+void ResetParams() {
+  stop_lost = default_stop_lost;
+  take_profit = default_take_profit;
+  lots = default_lots;
 }
 
 void Buy(double lots, double take_profit, double stop_lost) {
@@ -176,13 +218,18 @@ void IncreaseLots(double &lots, const double step_adjust) {
 }
 
 void ReduceLots(double &lots, const double step_adjust) {
-  if (lots <= min_lots) {
+  if (lots > min_lots && lots - step_adjust <= 0.05) {
+    Print("here lots: ", lots);
+    lots -= 0.01;
+    return;
+  }
+  if (lots - step_adjust <= min_lots) {
     Print("Reach minimum lots size");
     lots = min_lots;
+    return;
   }
-  else {
-    lots -= step_adjust;
-  }
+  Print("finally here lots: ", lots);
+  lots -= step_adjust;
 }
 
 void DrawLabel(string id, string text, color text_color, int y_order) {
