@@ -21,11 +21,11 @@ double take_profit = default_take_profit;
 double lots = default_lots;
 
 void OnTick() {
-  DrawLabel("intro", "FOMO by LEO", clrOrangeRed, 0);
-  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2) + ". SL: -" + DoubleToString(stop_lost, 0) + " pips" + ". TP: +" + DoubleToString(take_profit, 0) + " pips", clrYellow, 1);
-  DrawLabel("command_1", "Adjust lots (0.05): (I)ncrease, (R)educe", clrYellow, 2);
-  DrawLabel("command_2", "SL/TP: Increase SL(1), Reduce SL(2), Increase TP(3), Reduce TP(4)", clrYellow, 3);
-  DrawLabel("command_3", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit, (C)lose, C(X)lose All, Reset(0)", clrYellow, 4);
+  DrawLabel("lots", "Lots size: " + DoubleToString(lots,2) + ". SL: -" + DoubleToString(stop_lost, 0) + " pips" + ". TP: +" + DoubleToString(take_profit, 0) + " pips", clrFireBrick, 0);
+  DrawLabel("command_1", "Adjust lots (0.05): (I)ncrease, (R)educe", clrFireBrick, 1);
+  DrawLabel("command_2", "SL/TP: Increase SL(1), Reduce SL(2), Increase TP(3), Reduce TP(4)", clrFireBrick, 2);
+  DrawLabel("command_3", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit", clrFireBrick, 3);
+  DrawLabel("command_4", "(C)lose, C(X)lose All, Reset(0)", clrFireBrick, 4);
 }
 
 void OnChartEvent(const int id,
