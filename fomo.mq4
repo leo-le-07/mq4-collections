@@ -25,7 +25,8 @@ void OnTick() {
   DrawLabel("command_1", "Adjust lots (0.05): (I)ncrease, (R)educe", clrFireBrick, 1);
   DrawLabel("command_2", "SL/TP: Increase SL(1), Reduce SL(2), Increase TP(3), Reduce TP(4)", clrFireBrick, 2);
   DrawLabel("command_3", "(B)uy, (S)ell, B(u)y Limit, S(e)ll Limit", clrFireBrick, 3);
-  DrawLabel("command_4", "(C)lose, C(X)lose All, Reset(0)", clrFireBrick, 4);
+  DrawLabel("command_4", "Min Lots(9), 0.5 Lots(8) 1 Lots(7), 2 Lots(6), 3 Lots(5)", clrFireBrick, 4);
+  DrawLabel("command_5", "(C)lose, C(X)lose All, Reset(0), Min Lots(9)", clrFireBrick, 5);
 }
 
 void OnChartEvent(const int id,
@@ -68,6 +69,21 @@ void OnChartEvent(const int id,
           break;
         case 52: // 4
           ReduceTP();
+          break;
+        case 53: // 5
+          SetLotsDirectly(lots, 3);
+          break;
+        case 54: // 6
+          SetLotsDirectly(lots, 2);
+          break;
+        case 55: // 7
+          SetLotsDirectly(lots, 1);
+          break;
+        case 56: // 8
+          SetLotsDirectly(lots, 0.5);
+          break;
+        case 57: // 9
+          SetLotsDirectly(lots, min_lots);
           break;
         case 83: // S
         Sell(lots, take_profit, stop_lost);
@@ -205,6 +221,10 @@ void Close() {
 
 void CloseAll() {
   _Close(true);
+}
+
+void SetLotsDirectly(double &lots, double lots_number) {
+  lots = min_lots;
 }
 
 void IncreaseLots(double &lots, const double step_adjust) {
