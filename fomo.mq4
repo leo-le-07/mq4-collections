@@ -224,7 +224,7 @@ void CloseAll() {
 }
 
 void SetLotsDirectly(double &lots, double lots_number) {
-  lots = min_lots;
+  lots = lots_number;
 }
 
 void IncreaseLots(double &lots, const double step_adjust) {
